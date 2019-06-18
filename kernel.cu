@@ -134,10 +134,10 @@ __global__ void kernel_func(float* a, float* x, int N)
 	//elimination
 	for (int m = 0; m < N; m++)
 	{
-		int Dx = ceilf((float)(N - m) / 16.0);
-		int Dy = ceilf((float)(N + 1 - m) / 16.0);
+		int Dx = ceilf((float)(N - m) / 32.0);
+		int Dy = ceilf((float)(N + 1 - m) / 32.0);
 		dim3 Blocks(Dx, Dy);
-		dim3 Blocksize(16, 16);
+		dim3 Blocksize(32, 32);
 		elimination << <Blocks, Blocksize >> > (a, N, m);
 		cudaDeviceSynchronize();
 	}
