@@ -21,7 +21,7 @@ int main() {
 	float* x;
 	int dim;
 	int N = 1000;
-	dim = (N + 1) * N;
+	dim = (N + 1) * N;	//Matrix is stored in a single array with dimension enough to hold all its elements
 
 	m = (float*)malloc(dim * sizeof(float));
 	x = (float*)malloc(N * sizeof(float));
