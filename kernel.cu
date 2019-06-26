@@ -96,6 +96,7 @@ Error:
 }
 __global__ void elimination(float *a, int N, int m)
 {
+	//m is added to indexes i & j to assign the threads to the elements from m to N of row m
 	int i = m + threadIdx.x + blockIdx.x * blockDim.x;
 	int j = m + blockIdx.y * blockDim.y + threadIdx.y;
 	int ij;		//element i,j of the matrix
@@ -129,21 +130,22 @@ __global__ void substitution(int i, int N, float *row, float *a, float*x) {
 }
 __global__ void kernel_func(float* a, float* x, int N)
 {
-	//dim3 Blocks(32, 32);	//Number of blocks per axis
-	//dim3 Blocksize(32, 32);	//Number of threads per Block per axis
-	//elimination
+	//Blocks:	Number of blocks per axis
+	//Blocksize: 	Number of threads per Block per axis
+	//elimination step
 	for (int m = 0; m < N; m++)
 	{
-		int Dx = ceilf((float)(N - m) / 32.0);
-		int Dy = ceilf((float)(N + 1 - m) / 32.0);
+		//32 is the warp size
+		int Dx = ceilf((float)(N - m) / 32.0);		//Number of blocks in x
+		int Dy = ceilf((float)(N + 1 - m) / 32.0);	//Number of blocks in y
 		dim3 Blocks(Dx, Dy);
-		dim3 Blocksize(32, 32);
+		dim3 Blocksize(32, 32);		//Maximum amount of threads permitted per block, as per GTX 1050 ti
 		elimination << <Blocks, Blocksize >> > (a, N, m);
 		cudaDeviceSynchronize();
 	}
 	//The last element of x, can be solved directly as follows
 	x[N - 1] = a[N*(N + 1) - 1] / a[N*(N + 1) - 2];
-	//This array stores temporarily at location i, the multiplication a[ij] * x[j]
+	//*row array stores temporarily at location i, the multiplication a[ij] * x[j]
 	//In order to add each of of them atomically into "sum"
 	float *row;
 	row = (float*)malloc((N + 1) * sizeof(float));
@@ -161,7 +163,6 @@ __global__ void kernel_func(float* a, float* x, int N)
 		eltij = i + (N + 1)*i;
 		x[i] = (a[eltb] - sum) / a[eltij];
 	}
-	printf("Hello");
 }
 void readm(float* m, int n) {
 	using namespace std;
