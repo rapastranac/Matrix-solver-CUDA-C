@@ -41,7 +41,7 @@ int main() {
 		return 1;
 	}
 	clock_t end = clock();
-	double elapsed_secs = double(end - begin);// / CLOCKS_PER_SEC;
+	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 	printMatrix(matrix, resultVector, N);
 	std::cout << "Elapsed time: " << elapsed_secs << std::endl;
 	return 0;
