@@ -1,4 +1,4 @@
-# Matrix-solver-CUDA-C
+# Matrix solver CUDA C/C++
 This solves the system of equations Ax=b using CUDA C/C++
 
 It reads an augmented matrix from a file in the same directory of the code.
